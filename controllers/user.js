@@ -13,6 +13,7 @@ module.exports.userRegister = async (req, res, next) => {
     if (exUser) {
       // return res.redirect('/join?error=exist'); // 에러페이지로 바로 리다이렉트
       console.log("이미 등록된 Email입니다!");
+      return res.status(409).json({ message: "이미 등록된 Email입니다!" });
       return 0;
     }
 
@@ -23,16 +24,25 @@ module.exports.userRegister = async (req, res, next) => {
          password
     );
 
-    req.login(newUser, (err) => {
-      if (err) {
-        console.log("tq 회원가입 한 다음에 로그인이 안 돼!")
-        return next(new ExpressError(err.message, 500));
-      } else {
-        // req.flash("success", "부추의 식단관리 사이트 가입을 환영합니다!");
-        console.log("회원가입 후 로그인 성공!");
-        res.redirect("/");
-      }
-    });
+    if(newUser){
+      console.log("회원가입 성공!");
+      return res.status(201).json(newUser);
+    }
+    else{
+      console.log("회원가입 오류!");
+      return res.status(500).json({ message: "회원가입 오류!" });
+    }
+
+    // req.login(newUser, (err) => {
+    //   if (err) {
+    //     console.log("tq 회원가입 한 다음에 로그인이 안 돼!")
+    //     return next(new ExpressError(err.message, 500));
+    //   } else {
+    //     // req.flash("success", "부추의 식단관리 사이트 가입을 환영합니다!");
+    //     console.log("회원가입 후 로그인 성공!");
+    //     res.redirect("/");
+    //   }
+    // });
   }catch (error){
     console.error(error);
       return next(error);
