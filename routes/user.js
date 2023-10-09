@@ -25,7 +25,7 @@ router.post(
       }
    //? done(null, exUser)가 처리된경우, 즉 로그인이 성공(user가 false가 아닌 경우), passport/index.js로 가서 실행시킨다.
       return req.login(user, loginError => {
-          return res.status(201).json(user);
+
 
          //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
          // 만일 done(err) 가 됬다면,
@@ -36,6 +36,7 @@ router.post(
          }
          // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
           userController.successLogin(req);
+         return res.status(201).json(user);
           // return res.redirect('/');
       });
    })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.

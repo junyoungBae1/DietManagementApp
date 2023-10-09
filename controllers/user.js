@@ -82,9 +82,8 @@ module.exports.logout = async (req, res, next) => {
     } else {
       req.session.destroy();
       console.log("로그아웃 성공!")
-      // req.flash("success", "안녕히가세요!");
-      res.redirect("/user/login");
-
+      // res.redirect("/user/login");
+      return res.status(201).json({ message: "로그아웃 성공!" });
     }
   });
   // req.logout();
