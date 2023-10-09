@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
         required : true,
         unique : true,
     },
+    phonenum: {
+        type : String,
+        required :true,
+    },
   });
 
 userSchema.plugin(passportLocalMongoose);

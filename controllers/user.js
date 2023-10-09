@@ -5,7 +5,7 @@ const User = require('../models/user');
 
 //회원가입
 module.exports.userRegister = async (req, res, next) => {
-  let { username, email, password } = req.body;
+  let { username, email, password,phonenum } = req.body;
   try {
 
     const exUser = await User.findOne({ where: {email}});
@@ -20,7 +20,8 @@ module.exports.userRegister = async (req, res, next) => {
 
     const newUser = await userModel.register(
         new userModel({username : username,
-          email : email}),
+          email : email,
+          phonenum : phonenum}),
          password
     );
 
