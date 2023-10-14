@@ -3,19 +3,17 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const session = require("express-session");
 const flash =  require("connect-flash");
 
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const passport = require("passport");
-const User = require("./models/user");
-const {LocalS} = require("./utils/middlewares");
+const passportConfig = require("./utils/passport");
 
 var userRouter = require("./routes/user");
 
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: false}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(logger('dev'));
@@ -32,34 +30,19 @@ mongoose
     console.log(err);
   });
 
-// session
-const sessionConfig = {
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-    //   expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    //   maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
-  };
 
-app.use(session(sessionConfig));
 
-//로그인 인증
+
+//로그인(JWT)
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(flash());
-
-passport.use(LocalS);
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passportConfig();
 
 app.use('/user',userRouter);
 
 
 
-//그냥 화면 잘 뜨는지 보려고
+//웹 화면 실행
   app.get("/", (req, res) => {
     res.end("HELLO!!","utf-8");
   });
