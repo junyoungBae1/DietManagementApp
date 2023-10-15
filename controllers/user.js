@@ -56,18 +56,19 @@ module.exports.userRegister = async (req, res, next) => {
         phonenum : phonenum,
       });
 
-      user.save().
-      then(user => {
-    console.log(user.username + "님, 회원가입 완료!");
-  })
-  .catch(err => {
-    console.log("Save 오류");
+      user.save()
+        .then(user => {
+          console.log(user.username + "님, 회원가입 완료!");
+          //웹용res.send("<script> alert('회원가입 되었습니다.'); location.href='/';</script>");
+        })
+        .catch(err => {
+          console.log("Save 오류");
           return res.json({registerSuccess: false, message: err});
-  });
-      return res.json({ registerSuccess: true });
+        });
+        return res.json({ registerSuccess: true });
+     });
     });
-  });
-};
+  };
 
 
 //로그인
@@ -97,8 +98,8 @@ module.exports.userLogin = (req, res,next) => {
       await user.save()
                 .then(user => {
                   console.log(user.username + "님, 환영합니다!");
-                  return res.status(200)
-                             .json({loginSuccess:true, token});
+                  //res.send("<script> alert('로그인 되었습니다.'); location.href='/';</script>");
+                  return res.status(200).json({loginSuccess:true, token});
                 })
                 .catch(err => {
                   console.log("Token Save 오류");

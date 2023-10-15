@@ -1,0 +1,15 @@
+<%-include('header.ejs')%> 
+
+<form action="/user/login" method="post">
+    <ul>
+        <li>로그인</li>
+        <li>이메일: <input type="text" name="email" required></li>
+        <li>비밀번호: <input type="password" name="password" required></li>
+
+        <button type='submit'>로그인</button>
+    </ul>
+</form>
+
+<a href="/register">회원가입</a>
+
+<%-include('footer.ejs')%>

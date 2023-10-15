@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
+const ejs = require('ejs');
 const path = require("path");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const flash =  require("connect-flash");
 
+var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
@@ -12,8 +14,12 @@ const passport = require("passport");
 const passportConfig = require("./utils/passport");
 
 var userRouter = require("./routes/user");
+var scoreRouter = require("./routes/score")
 
-app.use(express.urlencoded({ extended: false}));
+app.set('view engine','ejs');
+app.set('views','./views')
+
+app.use(express.urlencoded({ extended: true})); //false에서 true로 바꿈
 app.use(express.json());
 app.use(cookieParser());
 app.use(logger('dev'));
@@ -39,13 +45,24 @@ app.use(flash());
 passportConfig();
 
 app.use('/user',userRouter);
-
+//점수
+app.use('/score',scoreRouter)
 
 
 //웹 화면 실행
   app.get("/", (req, res) => {
-    res.end("HELLO!!","utf-8");
+
+    console.log("start")
+
+    res.render('app');
   });
+  app.get('/login', (req,res) => {
+    res.render('login')
+  })
+  app.get('/register', (req,res) => {
+    res.render('register')
+  })
+
 app.listen(port, () => {
     console.log(`프로젝트가 ${port}번 포트에서 시작합니다.`);
   });

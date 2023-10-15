@@ -1,0 +1,16 @@
+<%-include('header.ejs')%> 
+    
+<h1>회원가입</h1>
+<form action="/user/register" method="post">
+    <ul>
+        <li> username : <input type="text" name="username" required></li>
+        <li> email : <input type="text" name="email" required></li>
+        <li> password : <input type="password" name="password" required></li>
+        <li> phonenum : <input type="text" name="phonenum" required></li>
+    </ul>
+
+    <br>
+    <button type='submit'>회원가입</button>
+</form>
+
+<%-include('footer.ejs')%>
