@@ -1,0 +1,60 @@
+<%-include('header.ejs')%> 
+
+<h1> score </h1>
+<form action="/score/updateScore" method="post" >
+    <ul>
+        <li> 이메일 : <input type="text" name="email" required ></li>
+        <li> 점수 : <input type="number" name="score" required ></li>
+    </ul>
+    <button type="submit">점수갱신하기</button>
+</form>
+
+<h1>Score List</h1>
+
+    <table id="score-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+  
+      <tbody></tbody>
+  
+    </table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $.ajax({
+      url: '/score/getScore',
+      method: 'GET',
+      success: function(response) {
+        var scores = response;
+  
+        var tableBodyHtml = '';
+        for (var i=0; i<scores.length; i++) {
+          var scoreData = scores[i];
+          tableBodyHtml += '<tr>';
+          tableBodyHtml += '<td>' + scoreData.username + '</td>';
+          tableBodyHtml += '<td>' + scoreData.email + '</td>';
+          tableBodyHtml += '<td>' + scoreData.score + '</td>';
+          tableBodyHtml += '</tr>';
+        }
+  
+        $('#score-table tbody').html(tableBodyHtml);
+        
+        console.log(scores); // 콘솔에 결과 출력(확인용)
+        
+       },
+       error: function(error) {
+         console.error(error);
+       }
+     });
+  });
+  </script>
+
+
+<%-include(`footer.ejs`)%>

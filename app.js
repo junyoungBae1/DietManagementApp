@@ -62,7 +62,9 @@ app.use('/score',scoreRouter)
   app.get('/register', (req,res) => {
     res.render('register')
   })
-
+  app.get('/score', (req,res) => {
+    res.render('score')
+  })
 app.listen(port, () => {
     console.log(`프로젝트가 ${port}번 포트에서 시작합니다.`);
   });
