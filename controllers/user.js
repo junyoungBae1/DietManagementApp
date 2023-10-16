@@ -61,13 +61,12 @@ module.exports.userRegister = async (req, res, next) => {
           console.log(user.username + "님, 회원가입 완료!");
           //웹용
           //res.send("<script> alert('회원가입 되었습니다.'); location.href='/';</script>");
-          return res.json({ registerSuccess: true });
         })
         .catch(err => {
           console.log("Save 오류");
           return res.json({registerSuccess: false, message: err});
         });
-        
+        return res.json({ registerSuccess: true });
      });
     });
   };
