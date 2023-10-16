@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Recipe</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>Create a Recipe</h1>
+
+<!-- recipe creation form -->
+<form action="/addRecipe/addRecipe" method="POST">
+
+    <!-- food name -->
+    <label for="foodname">Food Name:</label><br>
+    <input type="text" id="foodname" name="foodname"><br>
+
+    <!-- ingredients -->
+    <div id='ingredients'>
+        <h2>Ingredients:</h2>
+        <!-- ingredients fields will be added here dynamically -->
+    </div>
+
+     <!-- cooking time -->
+     <div id='cookingTime'>
+         <h2>Cooking Time:</h2> 
+         <!-- cooking time fields will be added here dynamically --> 
+     </div>
+
+     <!-- submit button -->
+     <input type= "submit" value= "Submit">
+
+</form>
+
+<button id='addIngredient'>Add Ingredient</button>  
+<button id='addCookingTime'>Add Cooking Time</button>
+
+
+<script>
+$(document).ready(function() {
+  var ingredientIndex = 0;
+  var cookingTimeIndex = 0;
+
+  $('#addIngredient').click(function() {
+      $('#ingredients').append(
+          '<li>' +
+          '재료: ' + '<input type="text" name=ingredients['+ingredientIndex+'][name]>' +
+          'grams: ' + '<input type=number name=ingredients['+ingredientIndex+'][grams]>' +
+          '</li>'
+      );
+      ingredientIndex++;
+  });
+
+  $('#addCookingTime').click(function() {
+      $('#cookingTime').append(
+          '<li>' +
+          'level: ' + '<input type=number name=cookingTime['+cookingTimeIndex+'][level]>' +
+          'min: ' + '<input type=number name=cookingTime['+cookingTimeIndex+'][min]>' +
+          '</li>'
+      );
+      cookingTimeIndex++;
+   });
+});
+</script>
+
+
+</body>
+</html> 

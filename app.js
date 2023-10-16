@@ -14,10 +14,11 @@ const passport = require("passport");
 const passportConfig = require("./utils/passport");
 
 var userRouter = require("./routes/user");
-var scoreRouter = require("./routes/score")
+var scoreRouter = require("./routes/score");
+var addRecipeRouter = require("./routes/addRecipe") ;
 
 app.set('view engine','ejs');
-app.set('views','./views')
+app.set('views','./views');
 
 app.use(express.urlencoded({ extended: true})); //false에서 true로 바꿈
 app.use(express.json());
@@ -46,7 +47,9 @@ passportConfig();
 
 app.use('/user',userRouter);
 //점수
-app.use('/score',scoreRouter)
+app.use('/score',scoreRouter);
+//recipe저장
+app.use('/addRecipe',addRecipeRouter);
 
 
 //웹 화면 실행
@@ -64,6 +67,9 @@ app.use('/score',scoreRouter)
   })
   app.get('/score', (req,res) => {
     res.render('score')
+  })
+  app.get('/addrecipe', (req,res) => {
+    res.render('addrecipe')
   })
 app.listen(port, () => {
     console.log(`프로젝트가 ${port}번 포트에서 시작합니다.`);
