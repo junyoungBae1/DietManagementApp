@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+    id: {
+        type : String,
+        default : function() {
+            return new mongoose.Types.ObjectId().toHexString();
+        },
+        unique: true,
+    },
     email: {
         type : String,
         required : true,
