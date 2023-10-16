@@ -48,7 +48,7 @@ passportConfig();
 app.use('/user',userRouter);
 //점수
 app.use('/score',scoreRouter);
-//recipe저장
+//recipe저장, 재료저장
 app.use('/addRecipe',addRecipeRouter);
 
 
@@ -70,6 +70,9 @@ app.use('/addRecipe',addRecipeRouter);
   })
   app.get('/addrecipe', (req,res) => {
     res.render('addrecipe')
+  })
+  app.get('/addingredient', (req,res) => {
+    res.render('addingredient')
   })
 app.listen(port, () => {
     console.log(`프로젝트가 ${port}번 포트에서 시작합니다.`);

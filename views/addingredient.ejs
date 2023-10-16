@@ -1,0 +1,13 @@
+<%-include('header.ejs')%> 
+
+<form action="/addRecipe/addIngredient" method="post">
+    <ul>
+        <li>재료추가</li>
+        <li>재료: <input type="text" name="ingredient" required></li>
+        <li>탄소배출량: <input type="number" name="emission" required></li>
+
+        <button type='submit'>추가하기</button>
+    </ul>
+</form>
+
+<%-include('footer.ejs')%>
