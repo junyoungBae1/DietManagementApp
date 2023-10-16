@@ -9,7 +9,7 @@ const IngredientSchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-});
+}, { _id : false });
 
 const FireSchema = new mongoose.Schema({
     level :{
@@ -20,7 +20,7 @@ const FireSchema = new mongoose.Schema({
         type: Number,
         required :true,
     },
-})
+}, { _id : false })
 const recipeSchema = new mongoose.Schema({
   id: {
       type : String,
@@ -36,7 +36,7 @@ const recipeSchema = new mongoose.Schema({
   ingredients: [IngredientSchema],
       
   cookingTime : [FireSchema]
-});
+}); 
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
