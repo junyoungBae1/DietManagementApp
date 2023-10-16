@@ -37,7 +37,7 @@ const recipeSchema = new mongoose.Schema({
   },
     ingredients: [IngredientSchema],
   cookingTime: {
-    type: [Number], // 약불/중불/강불 /분 단위
+    type: [FireSchema], // 약불/중불/강불 /분 단위
     required: true
   }
 });
