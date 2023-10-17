@@ -31,7 +31,8 @@ const recipeSchema = new mongoose.Schema({
   },
   foodname : {
       type: String,
-      required: true
+      required: true,
+      unique : true
   },
   ingredients: [IngredientSchema],
       

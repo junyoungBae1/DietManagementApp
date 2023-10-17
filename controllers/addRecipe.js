@@ -25,7 +25,7 @@ module.exports.addRecipe = async (req, res, next) => {
 module.exports.addIngredient = async (req, res, next) => {
     try {
         const ingredient = req.body.ingredient;
-        const emission = req.body.emission;
+        const emission = Number(req.body.emission);
 
         const newIngredient = new Ingredient({
             ingredient,
@@ -34,8 +34,8 @@ module.exports.addIngredient = async (req, res, next) => {
         // Save to database
         await newIngredient.save();
     
-        res.send("<script> alert('DB SAVE'); location.href='/addRecipe';</script>");
+        res.send("<script> alert('DB SAVE'); location.href='/addingredient';</script>");
       } catch (error) {
-        res.status(500).json({ error: 'An error occurred while creating the ingredient.' });
+        res.status(500).json(error);
       }
 };

@@ -15,7 +15,8 @@ const passportConfig = require("./utils/passport");
 
 var userRouter = require("./routes/user");
 var scoreRouter = require("./routes/score");
-var addRecipeRouter = require("./routes/addRecipe") ;
+var addRecipeRouter = require("./routes/addRecipe");
+var calculatorRouter = require("./routes/calculator");
 
 app.set('view engine','ejs');
 app.set('views','./views');
@@ -50,7 +51,8 @@ app.use('/user',userRouter);
 app.use('/score',scoreRouter);
 //recipe저장, 재료저장
 app.use('/addRecipe',addRecipeRouter);
-
+//탄소계산기
+app.use('/calculator',calculatorRouter)
 
 //웹 화면 실행
   app.get("/", (req, res) => {
@@ -73,6 +75,9 @@ app.use('/addRecipe',addRecipeRouter);
   })
   app.get('/addingredient', (req,res) => {
     res.render('addingredient')
+  })
+  app.get('/calculator', (req,res) => {
+    res.render('calculator')
   })
 app.listen(port, () => {
     console.log(`프로젝트가 ${port}번 포트에서 시작합니다.`);

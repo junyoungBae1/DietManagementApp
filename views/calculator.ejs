@@ -1,0 +1,12 @@
+<%-include('header.ejs')%> 
+
+<form action="/calculator/calculateEmission" method="post">
+    <ul>
+        <li>탄소계산기</li>
+        <li>foodname: <input type="text" name="foodname" required></li>
+
+        <button type='submit'>확인</button>
+    </ul>
+</form>
+
+<%-include('footer.ejs')%>
