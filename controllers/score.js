@@ -30,7 +30,7 @@ module.exports.updateScore = async (req, res, next) => {
 module.exports.getScore = async (req, res, next) => {
     try {
         // 점수별로 내림차순 정렬하여 가져옴
-        const scores = await User.find({}, 'username score').sort({ score: -1 }); 
+        const scores = await User.find({}, { _id: 0, username: 1, score: 1 }).sort({ score: -1 }); 
         console.log(scores)
         res.json(scores);
     } catch (err) {
