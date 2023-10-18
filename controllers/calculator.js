@@ -8,6 +8,7 @@ const strongFire = 0.006
 
 module.exports.calculateEmission = async (req, res, next) => {
     try {
+      console.log(req.body);
       const foodname = req.body.foodname; // Assuming the food name is sent in the request body
       const recipe = await Recipe.findOne({ foodname });
     console.log(recipe)
