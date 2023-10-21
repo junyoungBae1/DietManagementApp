@@ -1,6 +1,5 @@
 const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
-const ingredient = require('../models/ingredient');
 
 const weakFire = 0.001
 const midFire = 0.003
@@ -46,13 +45,15 @@ module.exports.calculateEmission = async (req, res, next) => {
             cookingProcess += strongFire * cooktime.min
         }
       }
+      //온실가스 배출계수
       cookingProcess = cookingProcess * 3.38
 
-      console.log("생산과정",productionProcess);
-      console.log("수송과정",transportProcess);
-      console.log("조리과정",cookingProcess);
+      console.log("생산과정",productionProcess/4);
+      console.log("수송과정",transportProcess/4);
+      console.log("조리과정",cookingProcess/4);
       //전체 탄소배출량
-      totalEmission = productionProcess + transportProcess + cookingProcess
+      totalEmission = productionProcess/4 + transportProcess/4 + cookingProcess/4
+
       console.log("전체탄소배출량",totalEmission)
       res.json({ totalEmission }); // Send the result back as JSON
       //res.send("<script> alert('계산완료.'); location.href='/calculator';</script>");
