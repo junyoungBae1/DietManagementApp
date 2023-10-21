@@ -38,10 +38,10 @@ module.exports.calculateEmission = async (req, res, next) => {
         if (cooktime.level == 0){
             cookingProcess += weakFire * cooktime.min
         }
-        else if(cooktime == 1){
+        else if(cooktime.level == 1){
             cookingProcess += midFire * cooktime.min
         }
-        else if(cooktime == 2){
+        else if(cooktime.level == 2){
             cookingProcess += strongFire * cooktime.min
         }
       }
