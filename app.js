@@ -14,6 +14,7 @@ const passport = require("passport");
 const passportConfig = require("./utils/passport");
 
 var userRouter = require("./routes/user");
+var imageRouter = require("./routes/image");
 var scoreRouter = require("./routes/score");
 var addRecipeRouter = require("./routes/addRecipe");
 var calculatorRouter = require("./routes/calculator");
@@ -46,7 +47,11 @@ app.use(passport.initialize());
 app.use(flash());
 passportConfig();
 
+
+
 app.use('/user',userRouter);
+//사진 저장
+app.use('/image',imageRouter);
 //점수
 app.use('/score',scoreRouter);
 //recipe저장, 재료저장
