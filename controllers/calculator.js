@@ -51,8 +51,8 @@ module.exports.calculateEmission = async (req, res, next) => {
       //전체 탄소배출량
       totalEmission = productionProcess + transportProcess + cookingProcess
       console.log("전체탄소배출량",totalEmission)
-      res.json({ totalEmission }); // Send the result back as JSON
-      //res.send("<script> alert('계산완료.'); location.href='/calculator';</script>");
+      //res.json({ totalEmission }); // Send the result back as JSON
+      res.send("<script> alert('계산완료.'); location.href='/calculator';</script>");
     } catch (error) {
       console.error(error);
       
