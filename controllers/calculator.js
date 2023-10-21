@@ -2,9 +2,9 @@ const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
 const ingredient = require('../models/ingredient');
 
-const weakFire = 0.003
-const midFire = 0.01
-const strongFire = 0.019
+const weakFire = 0.001
+const midFire = 0.003
+const strongFire = 0.006
 
 module.exports.calculateEmission = async (req, res, next) => {
     try {
@@ -46,14 +46,16 @@ module.exports.calculateEmission = async (req, res, next) => {
             cookingProcess += strongFire * cooktime.min
         }
       }
+      cookingProcess = cookingProcess * 3.38
+
       console.log("생산과정",productionProcess);
       console.log("수송과정",transportProcess);
       console.log("조리과정",cookingProcess);
       //전체 탄소배출량
       totalEmission = productionProcess + transportProcess + cookingProcess
       console.log("전체탄소배출량",totalEmission)
-      //res.json({ totalEmission }); // Send the result back as JSON
-      res.send("<script> alert('계산완료.'); location.href='/calculator';</script>");
+      res.json({ totalEmission }); // Send the result back as JSON
+      //res.send("<script> alert('계산완료.'); location.href='/calculator';</script>");
     } catch (error) {
       console.error(error);
       
