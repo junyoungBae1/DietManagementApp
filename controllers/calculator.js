@@ -2,9 +2,9 @@ const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
 const ingredient = require('../models/ingredient');
 
-const weakFire = 0.001
-const midFire = 0.003
-const strongFire = 0.006
+const weakFire = 0.003
+const midFire = 0.01
+const strongFire = 0.019
 
 module.exports.calculateEmission = async (req, res, next) => {
     try {
@@ -35,13 +35,14 @@ module.exports.calculateEmission = async (req, res, next) => {
       }
       //조리과정
       for (let cooktime of recipe.cookingTime){
+        console.log(cooktime);
         if (cooktime.level == 0){
             cookingProcess += weakFire * cooktime.min
         }
-        else if(cooktime == 1){
+        else if(cooktime.level == 1){
             cookingProcess += midFire * cooktime.min
         }
-        else if(cooktime == 2){
+        else if(cooktime.level == 2){
             cookingProcess += strongFire * cooktime.min
         }
       }
