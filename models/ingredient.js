@@ -1,4 +1,3 @@
-const { required } = require('joi');
 const mongoose = require('mongoose');
 
 const ingredientsSchema = new mongoose.Schema({

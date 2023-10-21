@@ -18,6 +18,7 @@ var imageRouter = require("./routes/image");
 var scoreRouter = require("./routes/score");
 var addRecipeRouter = require("./routes/addRecipe");
 var calculatorRouter = require("./routes/calculator");
+var noticeRouter = require("./routes/noticeBoard");
 
 app.set('view engine','ejs');
 app.set('views','./views');
@@ -58,6 +59,8 @@ app.use('/score',scoreRouter);
 app.use('/addRecipe',addRecipeRouter);
 //탄소계산기
 app.use('/calculator',calculatorRouter)
+//게시물
+app.use('/noticeBoard',noticeRouter);
 
 //웹 화면 실행
   app.get("/", (req, res) => {
