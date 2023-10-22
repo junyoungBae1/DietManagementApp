@@ -39,7 +39,7 @@ module.exports.getBoard = async(req,res) => {
     const notice = await Notice.findOne({noticeToken: noticetoken})
     if (notice) {
 			let matchResult = 0;
-      if (notice.userToken === usertoken) { 
+      if (notice.userEmail === userEmail) { 
         matchResult = 1;
       }
       return res.status(200).json({ data: { ...notice._doc, matchResult } });
