@@ -155,14 +155,14 @@ module.exports.deleteimage = async (req, res, next) => {
 
 async function updateScore(email,totalEmission,etc){
     var score = 0
-    
+
     try{
         //주식일 경우
-        if(etc = 1){
+        if(etc === 1){
             score = parseInt(max(0,min(100,-log(totalEmission / 1.19 * 100))));
         }
         //간식일 경우
-        else if(etc = 0){
+        else if(etc === 0){
             score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
         }
         const user = await User.findOne({ email });
