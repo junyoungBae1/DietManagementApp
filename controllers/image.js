@@ -1,5 +1,4 @@
 const Image = require('../models/image');
-const {data} = require("express-session/session/cookie");
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
@@ -11,7 +10,7 @@ module.exports.saveimage = async (req, res) => {
     });
     }
 
-    // Convert totalEmission from string to array of numbers
+    //배열 변환
     try {
         totalEmission = JSON.parse(totalEmission).map(Number);
         foodname = JSON.parse(foodname).map(String);
@@ -23,7 +22,7 @@ module.exports.saveimage = async (req, res) => {
         });
     }
 
-    // Check if foodname and totalEmission have the same length
+    // 배열 크기 체크
     if(foodname.length !== totalEmission.length) {
         console.log("foodname과 totalEmission의 배열 크기가 맞지 않습니다!");
         return res.status(400).json({
@@ -36,7 +35,7 @@ module.exports.saveimage = async (req, res) => {
 
 
     for(let i=0; i<foodname.length; i++) {
-        // Check if totalemission[i] is a number
+        // totalemission[i]이 number 형식인지 체크
         if(typeof totalEmission[i] !== 'number') {
             console.log(`Invalid total emission value: ${totalEmission[i]}`);
             return res.status(400).json({
