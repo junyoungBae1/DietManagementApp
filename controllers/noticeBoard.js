@@ -1,13 +1,13 @@
 const Notice = require('../models/noticeBoard');
 const User = require('../models/user');
 var randomString = require("randomstring");
-var moment = require('moment');
-require('moment-timezone');
-moment.tz.setDefault("Asia/Seoul");
 
+var moment = require('moment-timezone');
+var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
 // 게시물 생성
 module.exports.create = async (req, res) => {
-    var date = moment().format('YYYY-MM-DD HH:mm:ss');
+  
+  console.log(postDate)
     const { title, content, writer, userEmail } = req.body;
     const newNotice = new Notice({
       noticeToken: randomString.generate(12),
@@ -15,11 +15,12 @@ module.exports.create = async (req, res) => {
       content: content,
       writer: writer,
       userEmail: userEmail,
-      createdAt: date,
+      date: postDate,
     });
 
     try {
       await newNotice.save();
+      console.log("create success")
       return res.status(200).json({ data: newNotice });
     } catch (err) {
       console.error(err);
@@ -41,6 +42,7 @@ module.exports.read = async (req, res) => {
 // 특정 게시물 조회
 module.exports.getBoard = async(req,res) => {
     const {noticetoken, userEmail} = req.body;
+    console.log(req.body)
     const notice = await Notice.findOne({noticeToken: noticetoken})
     if (notice) {
 			let matchResult = 0;
