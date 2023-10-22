@@ -6,9 +6,10 @@ const storage = multer.memoryStorage()
 const upload = multer({storage:storage});
 const catchAsync = require("../utils/catchAsync");
 
-//image db에 저장
+//image O  db저장
 router.post('/upload',upload.single('img'),catchAsync(imageController.saveimage))
-
+//image X  db저장
+router.post('/upload2',imageController.saveimage)
 //image 탐색
 router.post('/find', catchAsync(imageController.findimage));
 
