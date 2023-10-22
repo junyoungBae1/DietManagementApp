@@ -20,11 +20,11 @@ module.exports.saveimage = async (req, res) => {
         totalEmission = JSON.parse(totalEmission).map(Number);
         foodname = JSON.parse(foodname).map(String);
     } catch(err) {
-        console.log('JSON 형식으로 배열 번환 실패..');
-        return res.status(400).json({err
+        console.log('JSON 형식으로 배열 번환 실패..',err);
+        return res.status(400).json(err
             //success: false,
             //message: 'JSON 형식으로 배열 번환 실패..'
-        });
+        );
     }
 
     // 배열 크기 체크
