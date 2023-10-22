@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const noticeSchema = new mongoose.Schema({
+  noticeToken: {
+    type : String,
+    unique : ture
+  },
   title: {
     type: String,
     required: true,
@@ -9,7 +13,11 @@ const noticeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {
+  writer: {
+    type: String,
+    required: true,
+  },
+  userToken: {
     type: String,
     required: true,
   },
