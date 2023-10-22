@@ -1,5 +1,9 @@
 const Image = require('../models/image');
 const User = require('../models/user');
+var moment = require('moment-timezone');
+
+var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
+
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
@@ -58,7 +62,8 @@ const image = new Image({
     contentType:req.file ? req.file.mimetype : null,
     },
     etc : etc,
-    foodnames : foodnames
+    foodnames : foodnames,
+    date : postDate,
     });
 
 await image.save();
@@ -75,6 +80,7 @@ else{
 }
 }
 
+
 module.exports.findimage = async (req,res,next) =>{
 
     if (!req.body.date) {
@@ -85,14 +91,15 @@ module.exports.findimage = async (req,res,next) =>{
 }
     let date = req.body.date;
     let email = req.body.email;
+
     // Date 객체로 변환
-    let targetDate = new Date(date);
+    let targetDate = moment.tz(date,"UTC");
 
     // 그 날의 시작 시간과 종료 시간
-    let startOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-    let endOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59);
+    let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");
+    let endOfDay = targetDate.clone().endOf('day').format("YYYY-MM-DD HH:mm:ss");
 
-    const fimages = await Image.find({email:email, createdAt: { $gte: startOfDay, $lte: endOfDay } });
+    const fimages = await Image.find({email:email, date: { $gte: startOfDay, $lte: endOfDay } });
 
     if (fimages.length === 0) {
         console.log("해당 날짜에 맞는 파일이 없습니다!");
@@ -100,36 +107,35 @@ module.exports.findimage = async (req,res,next) =>{
             success: false,
             message: "해당 날짜에 맞는 파일이 없습니다!",
         });
-    } else {
-        console.log("파일 찾기 성공!");
+     } else {
+         console.log("파일 찾기 성공!");
 
-        const imagesData = fimages.map(fimage => ({
-            created_at: fimage.createdAt,
-            image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
-            image_foods: fimage.foodnames
-        }));
+         const imagesData = fimages.map(fimage => ({
+             created_at: fimage.createdAt,
+             image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
+             image_foods: fimage.foodnames
+         }));
 
-        return res.json({
-            success: true,
-            message: "파일 찾기 성공!",
-            images_data_count : imagesData.length,
-            images_data : imagesData,
-            image_foods : this.image_foods,
+         return res.json({
+             success: true,
+             message: "파일 찾기 성공!",
+             images_data_count : imagesData.length,
+             images_data : imagesData,
        });
-    }
+   }
 }
 
 module.exports.deleteimage = async (req, res, next) => {
     let date = req.body.date;
-    let targetDate = new Date(date);
+     let targetDate = moment.tz(date,"UTC");
 
     // 그 날의 시작 시간과 종료 시간
-    let startOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-    let endOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59);
+    let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");
+    let endOfDay = targetDate.clone().endOf('day').format("YYYY-MM-DD HH:mm:ss");
 
     try {
         // 시작 시간과 종료 시간 사이에 생성된 모든 이미지를 찾아 삭제
-        const deletedImages = await Image.deleteMany({ createdAt: { $gte: startOfDay, $lte: endOfDay } });
+        const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
 
         if (deletedImages.deletedCount === 0) {
             console.log("해당 날짜에 맞는 파일이 없습니다!");

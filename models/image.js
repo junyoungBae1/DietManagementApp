@@ -24,7 +24,12 @@ const imageSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    foodnames: [foodnameSchema]
-},{timestamps: true});
+    foodnames: [foodnameSchema],
+    date : {
+        type: String,
+        required: true,
+},
+
+});
 
 module.exports = mongoose.model("Image",imageSchema);
