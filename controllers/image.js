@@ -1,21 +1,78 @@
 const Image = require('../models/image');
+const {data} = require("express-session/session/cookie");
 
 module.exports.saveimage = async (req, res) => {
-    let {email,foodname,etc} = req.body;
-    // console.log(req.body.foodname)
+    let {email,foodname,totalEmission,etc} = req.body;
+    if(!email || !etc){
+        console.log("email이나 etc가 null입니다..")
+        return res.status(400).json({
+        success: false,
+        message: "email이나 etc가 null입니다.."
+    });
+    }
+
+    // Convert totalEmission from string to array of numbers
+    try {
+        totalEmission = JSON.parse(totalEmission).map(Number);
+        foodname = JSON.parse(foodname).map(String);
+    } catch(err) {
+        console.log('JSON 형식으로 배열 번환 실패..');
+        return res.status(400).json({
+            success: false,
+            message: 'JSON 형식으로 배열 번환 실패..'
+        });
+    }
+
+    // Check if foodname and totalEmission have the same length
+    if(foodname.length !== totalEmission.length) {
+        console.log("foodname과 totalEmission의 배열 크기가 맞지 않습니다!");
+        return res.status(400).json({
+            success: false,
+            message: "foodname과 totalEmission의 배열 크기가 맞지 않습니다!"
+        });
+    }
+
+    let foodnames = [];
+
+
+    for(let i=0; i<foodname.length; i++) {
+        // Check if totalemission[i] is a number
+        if(typeof totalEmission[i] !== 'number') {
+            console.log(`Invalid total emission value: ${totalEmission[i]}`);
+            return res.status(400).json({
+                success: false,
+                message: `Invalid total emission value: ${totalEmission[i]}`
+            });
+        }
+
+        foodnames.push({
+            foodname: foodname[i],
+            totalEmission: totalEmission[i]
+        });
+    }
 
 const image = new Image({
-email : email,
-img:{
-data: req.file.buffer,
-contentType: req.file.mimetype,
-},
-etc : etc,
-});
+    email : email,
+    img:{
+    data:req.file ? req.file.buffer : null,
+    contentType:req.file ? req.file.mimetype : null,
+    },
+    etc : etc,
+    foodnames : foodnames
+    });
+
 await image.save();
-console.log("Image save 성공!");
+
+if(!req.file){
+    console.log("탄소배출량 save 성공!");
 // res.send("success");
-    res.status(200).send(req.file.buffer.toString('base64'));
+    res.status(200).send("탄소배출량 save 성공!");
+}
+else{
+    console.log("Image save 성공!");
+// res.send("success");
+    res.status(200).send("Image save 성공!");
+}
 }
 
 module.exports.findimage = async (req,res,next) =>{
@@ -48,14 +105,16 @@ module.exports.findimage = async (req,res,next) =>{
 
         const imagesData = fimages.map(fimage => ({
             created_at: fimage.createdAt,
-            image_data: fimage.img.data.toString('base64')
+            image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
+            image_foods: fimage.foodnames
         }));
 
         return res.json({
             success: true,
             message: "파일 찾기 성공!",
             images_data_count : imagesData.length,
-            images_data : imagesData
+            images_data : imagesData,
+            image_foods : this.image_foods,
        });
     }
 }

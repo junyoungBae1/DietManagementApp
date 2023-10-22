@@ -8,6 +8,7 @@ router.get('/read',noticeController.read);
 //게시판 글 수정 U
 router.post('/update',noticeController.update)
 //게시판 글 삭제 D
-routes.post('/delete',noticeController.delete)
+router.post('/delete',noticeController.delete)
 
+module.exports = router;
 
