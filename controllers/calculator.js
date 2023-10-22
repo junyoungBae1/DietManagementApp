@@ -10,7 +10,8 @@ module.exports.calculateEmission = async (req, res, next) => {
       console.log(req.body);
       const foodname = req.body.foodname; // Assuming the food name is sent in the request body
       const recipe = await Recipe.findOne({ foodname });
-    console.log(recipe)
+      
+      console.log(recipe)
       if (!recipe) {
         throw new Error(`No recipe found for ${foodname}`);
       }
