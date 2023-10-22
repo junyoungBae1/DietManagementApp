@@ -1,8 +1,13 @@
 const Notice = require('../models/noticeBoard');
 const User = require('../models/user');
+var randomString = require("randomstring");
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 // 게시물 생성
 module.exports.create = async (req, res) => {
+    var date = moment().format('YYYY-MM-DD HH:mm:ss');
     const { title, content, writer, userEmail } = req.body;
     const newNotice = new Notice({
       noticeToken: randomString.generate(12),
@@ -10,7 +15,7 @@ module.exports.create = async (req, res) => {
       content: content,
       writer: writer,
       userEmail: userEmail,
-      createdAt: Date.now(),
+      createdAt: date,
     });
 
     try {
