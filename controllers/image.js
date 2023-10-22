@@ -14,7 +14,7 @@ module.exports.saveimage = async (req, res) => {
         message: "email이나 etc가 null입니다.."
     });
     }
-
+    console.log(email,foodname,totalEmission,etc)
     //배열 변환
     try {
         totalEmission = JSON.parse(totalEmission).map(Number);
