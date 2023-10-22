@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const noticeSchema = new mongoose.Schema({
   noticeToken: {
     type : String,
-    unique : ture
+    unique : true,
   },
   title: {
     type: String,
@@ -17,7 +17,7 @@ const noticeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userToken: {
+  userEmail: {
     type: String,
     required: true,
   },

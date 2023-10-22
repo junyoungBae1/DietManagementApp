@@ -14,3 +14,4 @@ router.post('/delete',noticeController.delete);
 //게시판 검색
 router.post('/serach',noticeController.search)
 
+module.exports = router;

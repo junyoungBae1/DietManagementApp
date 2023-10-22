@@ -1,5 +1,5 @@
 const Image = require('../models/image');
-const {data} = require("express-session/session/cookie");
+const User = require('../models/user');
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
@@ -11,7 +11,7 @@ module.exports.saveimage = async (req, res) => {
     });
     }
 
-    // Convert totalEmission from string to array of numbers
+    //배열 변환
     try {
         totalEmission = JSON.parse(totalEmission).map(Number);
         foodname = JSON.parse(foodname).map(String);
@@ -23,7 +23,7 @@ module.exports.saveimage = async (req, res) => {
         });
     }
 
-    // Check if foodname and totalEmission have the same length
+    // 배열 크기 체크
     if(foodname.length !== totalEmission.length) {
         console.log("foodname과 totalEmission의 배열 크기가 맞지 않습니다!");
         return res.status(400).json({
@@ -36,7 +36,7 @@ module.exports.saveimage = async (req, res) => {
 
 
     for(let i=0; i<foodname.length; i++) {
-        // Check if totalemission[i] is a number
+        // totalemission[i]이 number 형식인지 체크
         if(typeof totalEmission[i] !== 'number') {
             console.log(`Invalid total emission value: ${totalEmission[i]}`);
             return res.status(400).json({
@@ -147,6 +147,32 @@ module.exports.deleteimage = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({
+            success: false,
+            message: "서버 오류",
+        });
+    }
+}
+
+async function updateScore(email,totalEmission,etc){
+    var score = 0
+
+    try{
+        //주식일 경우
+        if(etc = 1){
+            score = parseInt(max(0,min(100,-log(totalEmission / 1.19 * 100))));
+        }
+        //간식일 경우
+        else if(etc = 0){
+            score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
+        }
+        const user = await User.findOne({ email });
+        user.score += Number(score);
+        await user.save();
+        console.log('점수가 업데이트  되었습니다.');
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({
             success: false,
             message: "서버 오류",
         });
