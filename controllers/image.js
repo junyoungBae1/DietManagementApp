@@ -7,6 +7,7 @@ var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
+    console.log(req.body);
     if(!email || !etc){
         console.log("email이나 etc가 null입니다..")
         return res.status(400).json({
