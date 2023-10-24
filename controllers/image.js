@@ -2,8 +2,6 @@ const Image = require('../models/image');
 const User = require('../models/user');
 var moment = require('moment-timezone');
 
-var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
-
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
@@ -55,6 +53,8 @@ module.exports.saveimage = async (req, res) => {
             totalEmission: totalEmission[i]
         });
     }
+
+    var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
 
 const image = new Image({
     email : email,
