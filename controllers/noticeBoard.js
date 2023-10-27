@@ -32,6 +32,7 @@ module.exports.create = async (req, res) => {
 module.exports.read = async (req, res) => {
     try {
       const list = await Notice.find();
+      console.log(list)
       return res.status(200).json({ data: list })
     } catch (err) {
       console.error(err);
