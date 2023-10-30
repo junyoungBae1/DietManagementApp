@@ -50,7 +50,7 @@ module.exports.getBoard = async(req,res) => {
       if (notice.userEmail === userEmail) { 
         matchResult = 1;
       }
-      console.log("a",notice.userEmail,"b", userEmail,"c",...notice._doc)
+      console.log("a",notice.userEmail,"b", userEmail,"c",notice)
       return res.status(200).json({ data: { ...notice._doc, matchResult } });
 		}
 		  return res.status(404).json({ message: 'getBoard Notice Not Found' });
