@@ -3,10 +3,10 @@ const User = require('../models/user');
 var randomString = require("randomstring");
 
 var moment = require('moment-timezone');
-var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
+
 // 게시물 생성
 module.exports.create = async (req, res) => {
-  
+  var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
   console.log(postDate)
     const { title, content, writer, userEmail } = req.body;
     const newNotice = new Notice({
