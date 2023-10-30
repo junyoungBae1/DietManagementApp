@@ -47,10 +47,9 @@ module.exports.getBoard = async(req,res) => {
     const notice = await Notice.findOne({noticeToken: noticetoken})
     if (notice) {
 			let matchResult = 0;
-      if (notice.userEmail === userEmail) { 
+      if (String(notice.userEmail) === String(userEmail)) { 
         matchResult = 1;
       }
-      console.log("a",notice.userEmail,"b", userEmail,"c",notice)
       return res.status(200).json({ data: { ...notice._doc, matchResult } });
 		}
 		  return res.status(404).json({ message: 'getBoard Notice Not Found' });
