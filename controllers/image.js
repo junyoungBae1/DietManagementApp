@@ -110,6 +110,7 @@ module.exports.findimage = async (req,res,next) =>{
         });
      } else {
          console.log("파일 찾기 성공!");
+         console.log(date);
 
          const imagesData = fimages.map(fimage => ({
              image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
