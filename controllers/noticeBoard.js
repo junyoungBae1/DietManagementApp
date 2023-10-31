@@ -79,24 +79,24 @@ module.exports.update = async (req, res) => {
   
 // 게시물 삭제
 module.exports.delete = async (req, res) => {
-    const { noticetoken } = req.body;
-  
-    try{
-      const noticeToDelete = await Notice.findOne({noticeToken: noticetoken});
-      if (!noticeToDelete) {
-        return res.status(404).json({ message: 'Notice not found' });
-      }
-      console.log("삭제 ",noticeToDelete)
-      await noticeToDelete.remove();
-      // 성공적으로 삭제되었을 때 응답
-      return res.json({ message: 'Successfully deleted' });
-      
-      }catch(err){
-        console.error(err);
-        return res.status(500).json({message:'Delete Server Error'});
-      }
-};
+  const { noticetoken } = req.body;
 
+  try{
+    const result = await Notice.deleteOne({noticeToken: noticetoken});
+    if (result.n === 0) {
+      return res.status(404).json({ message: 'Notice not found' });
+    }
+    
+    console.log("삭제 성공")
+    
+    // 성공적으로 삭제되었을 때 응답
+    return res.json({ message: 'Successfully deleted' });
+    
+  }catch(err){
+      console.error(err);
+      return res.status(500).json({message:'Delete Server Error'});
+  }
+};
 // 게시물 검색
 module.exports.search = async (req, res) => {
   const { keyword } = req.body;
