@@ -83,10 +83,10 @@ module.exports.delete = async (req, res) => {
   
     try{
       const noticeToDelete = await Notice.findOne({noticeToken: noticetoken});
-      console.log("삭제 ",noticeToDelete)
       if (!noticeToDelete) {
         return res.status(404).json({ message: 'Notice not found' });
       }
+      console.log("삭제 ",noticeToDelete)
       await noticeToDelete.remove();
       // 성공적으로 삭제되었을 때 응답
       return res.json({ message: 'Successfully deleted' });
