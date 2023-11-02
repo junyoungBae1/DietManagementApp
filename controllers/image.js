@@ -114,7 +114,8 @@ module.exports.findimage = async (req,res,next) =>{
 
          const imagesData = fimages.map(fimage => ({
              image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
-             image_foods: fimage.foodnames
+             image_foods: fimage.foodnames,
+             image_date: fimage.date
          }));
 
          return res.json({
