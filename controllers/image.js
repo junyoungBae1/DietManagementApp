@@ -6,7 +6,7 @@ var moment = require('moment-timezone');
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
     console.log(req.body);
-    updateScore(email,totalEmission,etc);
+    
     if(!email || !etc){
         console.log("email이나 etc가 null입니다..")
         return res.status(400).json({
@@ -69,7 +69,7 @@ const image = new Image({
     });
 
 await image.save();
-
+updateScore(email,totalEmission,etc);
 if(!req.file){
     console.log("탄소배출량 save 성공!");
 // res.send("success");
