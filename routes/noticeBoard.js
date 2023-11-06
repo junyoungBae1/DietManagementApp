@@ -12,6 +12,13 @@ router.post('/update',noticeController.update);
 //게시판 글 삭제 D
 router.post('/delete',noticeController.delete);
 //게시판 검색
-router.post('/serach',noticeController.search)
+router.post('/serach',noticeController.search);
+//댓글 작성
+router.post('/createComment',noticeController.createComment);
+//댓글 삭제
+router.post('/deleteComment',noticeController.deleteComment);
+//댓글 수정
+router.post('/updateComment',noticeController.updateComment);
+
 
 module.exports = router;

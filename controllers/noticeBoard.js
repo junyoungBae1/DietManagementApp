@@ -121,4 +121,71 @@ module.exports.search = async (req, res) => {
   }
 };
 
-//댓글?
+//댓글 생성
+module.exports.createComment = async (req, res) => {
+  const { noticeToken, userEmail, writer, content } = req.body;
+  var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
+  try{
+      const notice = await Notice.findOne({noticeToken: noticeToken});
+      if (!notice) {
+          return res.status(404).json({ message: 'Notice not found' });
+      }
+      console.log(notice)
+      notice.comments.push({userEmail: userEmail,writer: writer, content: content, date: postDate});
+      await notice.save();
+  
+      return res.status(200).json({ message: 'Comment created' });
+  } catch(err){
+      console.error(err);
+      return res.status(500).json({message:'Server Error'});
+  }
+};
+//댓글 삭제
+module.exports.deleteComment = async (req, res) => {
+  const { noticeToken, commentId } = req.body;
+
+  try{
+      const notice = await Notice.findOne({noticeToken: noticeToken});
+      if (!notice) {
+          return res.status(404).json({ message: 'Notice not found' });
+      }
+      
+      let comment = notice.comments.id(commentId);
+      console.log(comment)
+      if (!comment) {
+          return res.status(404).json({ message: 'Comment not found' });
+      }
+
+      notice.comments.pull(commentId);
+      await notice.save();
+  
+      return res.status(200).json({ message: 'Comment deleted' });
+  } catch(err){
+      console.error(err);
+      return res.status(500).json({message:'Server Error'});
+  }
+};
+//댓글 수정
+module.exports.updateComment = async (req, res) => {
+  const { noticeToken, commentId, content } = req.body;
+
+  try{
+      const notice = await Notice.findOne({noticeToken: noticeToken});
+      if (!notice) {
+          return res.status(404).json({ message: 'Notice not found' });
+      }
+  
+      let comment = notice.comments.id(commentId);
+      if (!comment) {
+          return res.status(404).json({ message: 'Comment not found' });
+      }
+  
+      comment.content = content;
+      await notice.save();
+  
+      return res.status(200).json({ message: 'Comment updated' });
+  } catch(err){
+      console.error(err);
+      return res.status(500).json({message:'Server Error'});
+  }
+};
