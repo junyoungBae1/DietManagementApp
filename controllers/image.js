@@ -6,6 +6,7 @@ var moment = require('moment-timezone');
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
     console.log(req.body);
+    updateScore(email,totalEmission,etc);
     if(!email || !etc){
         console.log("email이나 etc가 null입니다..")
         return res.status(400).json({
@@ -172,6 +173,14 @@ async function updateScore(email,totalEmission,etc){
         //간식일 경우
         else if(etc === 0){
             score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
+        }
+        //금식을 했을 경우
+        else if(etc === 2){
+            score = 100;
+        }
+        //간식을 먹지 않았을 경우
+        else if(etc === 3){
+            score =25;
         }
         const user = await User.findOne({ email });
         user.score += Number(score);
