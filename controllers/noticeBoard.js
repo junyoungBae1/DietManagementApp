@@ -45,13 +45,27 @@ module.exports.getBoard = async(req,res) => {
     const {noticetoken, userEmail} = req.body;
     console.log(req.body)
     const notice = await Notice.findOne({noticeToken: noticetoken})
+    //게시글 작성자 확인
     if (notice) {
 			let matchResult = 0;
       if (String(notice.userEmail) == String(userEmail)) { 
         matchResult = 1;
       }
+
+    // notice를 JavaScript 객체로 변환
+    const noticeObject = notice.toObject();
+
+    // 댓글의 작성자 확인
+    noticeObject.comments = noticeObject.comments.map(comment => {
+        if (String(comment.userEmail) == String(userEmail)) {
+            comment.isWriter = true;
+        } else {
+            comment.isWriter = false;
+        }
+        return comment;
+    });
       console.log(String(notice.userEmail), String(userEmail), matchResult);
-      return res.status(200).json({ data: { ...notice._doc, matchResult } });
+      return res.status(200).json({ data: { ...noticeObject, matchResult } });
 		}
 		  return res.status(404).json({ message: 'getBoard Notice Not Found' });
 }
