@@ -1,10 +1,10 @@
 const User = require('../models/user');
+var moment = require('moment-timezone');
 
 //점수 업데이트
 module.exports.updateScore = async (req, res, next) => {
     const email = req.body.email;
     const score = req.body.score;
-    
     try {
       // 이메일로 사용자 찾기
       const user = await User.findOne({ email });
@@ -29,10 +29,12 @@ module.exports.updateScore = async (req, res, next) => {
 //점수 리스트
 module.exports.getScore = async (req, res, next) => {
     try {
+        // 업데이트된 시간 알려주기
+        var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
         // 점수별로 내림차순 정렬하여 가져옴
         const scores = await User.find({}, { _id: 0, username: 1, score: 1 }).sort({ score: -1 }); 
-        console.log(scores)
-        res.json(scores);
+        console.log(scores,postDate)
+        res.status(200).json([scores,postDate]);
     } catch (err) {
         console.error(err);
         res.status(500).send("서버 에러");
