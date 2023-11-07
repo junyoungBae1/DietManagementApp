@@ -95,7 +95,7 @@ module.exports.findimage = async (req,res,next) =>{
     let email = req.body.email;
 
     // Date 객체로 변환
-    let targetDate = moment.tz(date,"UTC");
+    let targetDate = moment.tz(date,"Asia/Seoul");
 
     // 그 날의 시작 시간과 종료 시간
     let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");
@@ -130,7 +130,7 @@ module.exports.findimage = async (req,res,next) =>{
 
 module.exports.deleteimage = async (req, res, next) => {
     let date = req.body.date;
-     let targetDate = moment.tz(date,"UTC");
+     let targetDate = moment.tz(date,"Asia/Seoul");
 
     // 그 날의 시작 시간과 종료 시간
     let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");

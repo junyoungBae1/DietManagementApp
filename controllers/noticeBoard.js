@@ -64,7 +64,7 @@ module.exports.getBoard = async(req,res) => {
         }
         return comment;
     });
-      console.log(String(notice.userEmail), String(userEmail), matchResult);
+      console.log(String(notice.userEmail), String(userEmail), matchResult,noticeObject);
       return res.status(200).json({ data: { ...noticeObject, matchResult } });
 		}
 		  return res.status(404).json({ message: 'getBoard Notice Not Found' });
@@ -147,7 +147,6 @@ module.exports.createComment = async (req, res) => {
       console.log(notice)
       notice.comments.push({userEmail: userEmail,writer: writer, content: content, date: postDate});
       await notice.save();
-  
       return res.status(200).json({ message: 'Comment created' });
   } catch(err){
       console.error(err);
