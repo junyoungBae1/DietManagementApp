@@ -167,7 +167,7 @@ async function updateScore(email,totalEmission,etc){
 
     try{
         //주식일 경우
-        if(etc === 1){
+        if(0 < etc < 4){
             score = parseInt(max(0,min(100,-log(totalEmission / 1.19 * 100))));
         }
         //간식일 경우
@@ -175,12 +175,12 @@ async function updateScore(email,totalEmission,etc){
             score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
         }
         //금식을 했을 경우
-        else if(etc === 2){
+        else if(etc === 4){
             score = 100;
         }
         //간식을 먹지 않았을 경우
-        else if(etc === 3){
-            score =25;
+        else if(etc === 5){
+            score = 25;
         }
         const user = await User.findOne({ email });
         user.score += Number(score);
