@@ -116,7 +116,8 @@ module.exports.findimage = async (req,res,next) =>{
          const imagesData = fimages.map(fimage => ({
              image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
              image_foods: fimage.foodnames,
-             image_date: fimage.date
+             image_date: fimage.date,
+             image_etc: fimage.etc
          }));
 
          return res.json({
@@ -173,14 +174,6 @@ async function updateScore(email,totalEmission,etc){
         //간식일 경우
         else if(etc === 0){
             score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
-        }
-        //금식을 했을 경우
-        else if(etc === 4){
-            score = 100;
-        }
-        //간식을 먹지 않았을 경우
-        else if(etc === 5){
-            score = 25;
         }
         const user = await User.findOne({ email });
         user.score += Number(score);

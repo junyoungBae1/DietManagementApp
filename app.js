@@ -61,7 +61,8 @@ app.use('/addRecipe',addRecipeRouter);
 app.use('/calculator',calculatorRouter)
 //게시물
 app.use('/noticeBoard',noticeRouter);
-
+//매 자정에 점수 업데이트
+require('./routes/cronJobs');
 //웹 화면 실행
   app.get("/", (req, res) => {
 
