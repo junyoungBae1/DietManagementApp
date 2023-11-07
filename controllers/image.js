@@ -56,7 +56,7 @@ module.exports.saveimage = async (req, res) => {
     }
 
     var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
-
+    score = updateScore(email,totalEmission,etc);
 const image = new Image({
     email : email,
     img:{
@@ -64,12 +64,13 @@ const image = new Image({
     contentType:req.file ? req.file.mimetype : null,
     },
     etc : etc,
+    score : score,
     foodnames : foodnames,
     date : postDate,
     });
 
 await image.save();
-updateScore(email,totalEmission,etc);
+
 if(!req.file){
     console.log("탄소배출량 save 성공!");
 // res.send("success");
@@ -117,7 +118,8 @@ module.exports.findimage = async (req,res,next) =>{
              image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
              image_foods: fimage.foodnames,
              image_date: fimage.date,
-             image_etc: fimage.etc
+             image_etc: fimage.etc,
+             image_score: fimage.score
          }));
 
          return res.json({
@@ -179,7 +181,7 @@ async function updateScore(email,totalEmission,etc){
         user.score += Number(score);
         await user.save();
         console.log('점수가 업데이트  되었습니다.');
-
+        return score;
     }catch(err){
         console.log(err);
         res.status(500).json({

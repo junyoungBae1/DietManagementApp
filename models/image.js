@@ -24,6 +24,10 @@ const imageSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    score:{
+      type: Number,
+      require: true,
+    },
     foodnames: [foodnameSchema],
     date : {
         type: String,
