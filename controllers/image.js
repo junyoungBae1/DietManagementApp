@@ -5,6 +5,7 @@ var moment = require('moment-timezone');
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
+    let score = 0;
     console.log(req.body);
     
     if(!email || !etc){
@@ -28,6 +29,7 @@ module.exports.saveimage = async (req, res) => {
     }
 
     // 배열 크기 체크
+    console.log(foodname,totalEmission)
     if(foodname.length !== totalEmission.length) {
         console.log("foodname과 totalEmission의 배열 크기가 맞지 않습니다!");
         return res.status(400).json({
@@ -48,15 +50,18 @@ module.exports.saveimage = async (req, res) => {
                 message: `Invalid total emission value: ${totalEmission[i]}`
             });
         }
-
+        //점수 업데이트
+        score = await updateScore(email,totalEmission[i],etc);
         foodnames.push({
             foodname: foodname[i],
-            totalEmission: totalEmission[i]
+            totalEmission: totalEmission[i],
+            score: score
         });
     }
 
     var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
-    score = updateScore(email,totalEmission,etc);
+    
+    console.log(score)
 const image = new Image({
     email : email,
     img:{
@@ -64,7 +69,6 @@ const image = new Image({
     contentType:req.file ? req.file.mimetype : null,
     },
     etc : etc,
-    score : score,
     foodnames : foodnames,
     date : postDate,
     });
@@ -171,11 +175,11 @@ async function updateScore(email,totalEmission,etc){
     try{
         //주식일 경우
         if(0 < etc < 4){
-            score = parseInt(max(0,min(100,-log(totalEmission / 1.19 * 100))));
+            score = parseInt(Math.max(0, Math.min(100, ((2.38 - totalEmission) / (2.38 - 0.1) * 100))));
         }
         //간식일 경우
         else if(etc === 0){
-            score = parseInt(max(0,min(25,-log(totalEmission / (1.19 * 1/4) * 100))));
+            score = parseInt(Math.max(0, Math.min(25, ((2.38 - totalEmission) / (2.38 - 0.1) * 25))));
         }
         const user = await User.findOne({ email });
         user.score += Number(score);

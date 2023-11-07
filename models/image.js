@@ -8,6 +8,10 @@ const foodnameSchema = new mongoose.Schema({
   totalEmission: {
     type: Number,
     required: true
+  },
+  score:{
+    type: Number,
+    require: true,
   }
 }, { _id : false });
 
@@ -23,10 +27,6 @@ const imageSchema = new mongoose.Schema({
     etc:{
         type: String,
         required: true,
-    },
-    score:{
-      type: Number,
-      require: true,
     },
     foodnames: [foodnameSchema],
     date : {
