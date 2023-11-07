@@ -122,8 +122,7 @@ module.exports.findimage = async (req,res,next) =>{
              image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
              image_foods: fimage.foodnames,
              image_date: fimage.date,
-             image_etc: fimage.etc,
-             image_score: fimage.score
+             image_etc: fimage.etc
          }));
 
          return res.json({
