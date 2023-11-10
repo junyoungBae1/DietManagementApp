@@ -19,6 +19,7 @@ var scoreRouter = require("./routes/score");
 var addRecipeRouter = require("./routes/addRecipe");
 var calculatorRouter = require("./routes/calculator");
 var noticeRouter = require("./routes/noticeBoard");
+var searchRouter = require("./routes/search");
 
 app.set('view engine','ejs');
 app.set('views','./views');
@@ -58,9 +59,11 @@ app.use('/score',scoreRouter);
 //recipe저장, 재료저장
 app.use('/addRecipe',addRecipeRouter);
 //탄소계산기
-app.use('/calculator',calculatorRouter)
+app.use('/calculator',calculatorRouter);
 //게시물
 app.use('/noticeBoard',noticeRouter);
+//음식 검색하기
+app.use('/search',searchRouter);
 //매 자정에 점수 업데이트
 require('./routes/cronJobs');
 //웹 화면 실행
