@@ -51,8 +51,7 @@ module.exports.saveimage = async (req, res) => {
         }
         foodnames.push({
             foodname: foodname[i],
-            totalEmission: totalEmission[i],
-            score: score
+            totalEmission: totalEmission[i]
         });
     }
 
