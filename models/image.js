@@ -8,10 +8,6 @@ const foodnameSchema = new mongoose.Schema({
   totalEmission: {
     type: Number,
     required: true
-  },
-  score:{
-    type: Number,
-    require: true,
   }
 }, { _id : false });
 

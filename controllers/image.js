@@ -5,7 +5,6 @@ var moment = require('moment-timezone');
 
 module.exports.saveimage = async (req, res) => {
     let {email,foodname,totalEmission,etc} = req.body;
-    let score = 0;
     console.log(req.body);
     
     if(!email || !etc){
@@ -50,8 +49,6 @@ module.exports.saveimage = async (req, res) => {
                 message: `Invalid total emission value: ${totalEmission[i]}`
             });
         }
-        //점수 업데이트
-        score = await updateScore(email,totalEmission[i],etc);
         foodnames.push({
             foodname: foodname[i],
             totalEmission: totalEmission[i],
@@ -60,8 +57,6 @@ module.exports.saveimage = async (req, res) => {
     }
 
     var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
-    
-    console.log(score)
 const image = new Image({
     email : email,
     img:{
@@ -89,13 +84,12 @@ else{
 
 
 module.exports.findimage = async (req,res,next) =>{
-
     if (!req.body.date) {
     return res.status(400).json({
         success: false,
         message: "'date' field 형식으로 작성해주세요!!(\"YYYY-MM-DD\")"
     });
-}
+}   
     let date = req.body.date;
     let email = req.body.email;
 
@@ -107,7 +101,8 @@ module.exports.findimage = async (req,res,next) =>{
     let endOfDay = targetDate.clone().endOf('day').format("YYYY-MM-DD HH:mm:ss");
 
     const fimages = await Image.find({email:email, date: { $gte: startOfDay, $lte: endOfDay } });
-
+    let totalEmission = Array(4).fill(0)
+    
     if (fimages.length === 0) {
         console.log("해당 날짜에 맞는 파일이 없습니다!");
         return res.json({
@@ -118,18 +113,30 @@ module.exports.findimage = async (req,res,next) =>{
          console.log("파일 찾기 성공!");
          console.log(date);
 
-         const imagesData = fimages.map(fimage => ({
-             image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
-             image_foods: fimage.foodnames,
-             image_date: fimage.date,
-             image_etc: fimage.etc
-         }));
+         const imagesData = fimages.map(fimage => {
+            fimage.foodnames.forEach(food => {
+                totalEmission[fimage.etc] += food.totalEmission;
+            });
+            return {
+                image_data: (fimage.img.data === null) ? null : fimage.img.data.toString('base64'),
+                image_foods: fimage.foodnames,
+                image_date: fimage.date,
+                image_etc: fimage.etc
+            };
+        });
+
+        let score = {};
+         for(let etc in totalEmission) {
+             score[etc] = await calScore(totalEmission[etc], etc);
+         }
 
          return res.json({
              success: true,
              message: "파일 찾기 성공!",
              images_data_count : imagesData.length,
              images_data : imagesData,
+             score: score,
+             totalEmission: totalEmission
        });
    }
 }
@@ -168,21 +175,21 @@ module.exports.deleteimage = async (req, res, next) => {
     }
 }
 
-async function updateScore(email,totalEmission,etc){
+async function calScore(totalEmission,etc){
     var score = 0
-
+    console.log(etc)
     try{
         //주식일 경우
-        if(0 < etc < 4){
+        if(totalEmission == 0){
+            return 0;
+        }
+        if(0 < etc && etc < 4){
             score = parseInt(Math.max(0, Math.min(100, ((2.38 - totalEmission) / (2.38 - 0.1) * 100))));
         }
         //간식일 경우
-        else if(etc === 0){
+        else if(etc == 0){
             score = parseInt(Math.max(0, Math.min(25, ((2.38 - totalEmission) / (2.38 - 0.1) * 25))));
         }
-        const user = await User.findOne({ email });
-        user.score += Number(score);
-        await user.save();
         console.log('점수가 업데이트  되었습니다.');
         return score;
     }catch(err){
