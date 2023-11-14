@@ -57,29 +57,63 @@ module.exports.saveimage = async (req, res) => {
     }
 
     var postDate = moment.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
-const image = new Image({
-    email : email,
-    img:{
-    data:req.file ? req.file.buffer : null,
-    contentType:req.file ? req.file.mimetype : null,
-    },
-    etc : etc,
-    foodnames : foodnames,
-    date : postDate,
-    });
+    var today = moment(postDate).format("YYYY-MM-DD");
+    const image = new Image({
+        email : email,
+        img:{
+        data:req.file ? req.file.buffer : null,
+        contentType:req.file ? req.file.mimetype : null,
+        },
+        etc : etc,
+        foodnames : foodnames,
+        date : postDate,
+        });
 
-await image.save();
+    await image.save();
+    
+    //Info DB에서 해당 이메일 찾기
+    let info = await Info.findOne({ email: email });
+    //해당 이메일이 없으면 새로 생성
+    if (!info) {
+        info = new Info({
+            email: email,
+            dates: []
+        });
+    }
+    //Info DB에서 해당 날짜 찾기
+    let dateEmission = info.dates.find(de => de.date === today);
+    // 해당 날짜가 없으면 새로 생성
+    if (!dateEmission) {
+        dateEmission = {
+            date: today,
+            Breakfast: 0,
+            Lunch: 0,
+            Dinner: 0,
+            totalEmission: 0,
+        };
+        info.dates.push(dateEmission);
+    }
+    //Info DB 탄소배출량 추가
+    const mealTypes = ['Dessert','Breakfast', 'Lunch', 'Dinner'];
+    for (const food of foodnames) {
+        let mealType = mealTypes[etc];
+        dateEmission[mealType] += food.totalEmission;
+        dateEmission.totalEmission += food.totalEmission;
+    }
+    // DB에 저장
+    await info.save();
 
-if(!req.file){
-    console.log("탄소배출량 save 성공!");
-// res.send("success");
-    res.status(200).send("탄소배출량 save 성공!");
-}
-else{
-    console.log("Image save 성공!");
-// res.send("success");
-    res.status(200).send("Image save 성공!");
-}
+
+    if(!req.file){
+        console.log("탄소배출량 save 성공!");
+    // res.send("success");
+        res.status(200).send("탄소배출량 save 성공!");
+    }
+    else{
+        console.log("Image save 성공!");
+    // res.send("success");
+        res.status(200).send("Image save 성공!");
+    }
 }
 
 
@@ -112,8 +146,13 @@ module.exports.findimage = async (req,res,next) =>{
      } else {
          console.log("파일 찾기 성공!");
          console.log(date);
+        // Info DB에서 해당 이메일 찾기
+        let info = await Info.findOne({ email: email });
 
-         const imagesData = fimages.map(fimage => {
+        // 해당 날짜 찾기
+        let dateEmission = info.dates.find(de => de.date === date);
+
+        const imagesData = fimages.map(fimage => {
             fimage.foodnames.forEach(food => {
                 totalEmission[fimage.etc] += food.totalEmission;
             });
@@ -124,7 +163,7 @@ module.exports.findimage = async (req,res,next) =>{
                 image_etc: fimage.etc
             };
         });
-
+        
         let score = Array(4).fill(0);
          for(let etc in totalEmission) {
              score[etc] = await calScore(totalEmission[etc], etc);
@@ -143,6 +182,8 @@ module.exports.findimage = async (req,res,next) =>{
 
 module.exports.deleteimage = async (req, res, next) => {
     let date = req.body.date;
+    let today = moment(req.body.date).format("YYYY-MM-DD");
+    const email = req.body.email
      // let targetDate = moment.tz(date,"Asia/Seoul");
 
     // 그 날의 시작 시간과 종료 시간
@@ -152,7 +193,7 @@ module.exports.deleteimage = async (req, res, next) => {
     try {
         // 시작 시간과 종료 시간 사이에 생성된 모든 이미지를 찾아 삭제
         // const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
-        const deletedImage = await Image.findOneAndDelete({ date: date });
+        const deletedImage = await Image.findOneAndDelete({ date: date, email: email});
 
         if (!deletedImage) {
             console.log("해당 날짜에 맞는 파일이 없습니다!");
@@ -163,6 +204,28 @@ module.exports.deleteimage = async (req, res, next) => {
         } else {
             console.log("파일 삭제 성공!");
             let foodnames = deletedImage.foodnames.map(item => item.foodname).join(', ');
+            //Info DB에서 해당 이메일 찾기
+            let info = await Info.findOne({ email: deletedImage.email });
+            // 해당 날짜를 찾기
+            let dateEmission = info.dates.find(de => de.date === today);
+            // 탄소 배출량 빼기
+            const mealTypes = ['Dessert', 'Breakfast', 'Lunch', 'Dinner'];
+            for (const food of deletedImage.foodnames) {
+                let mealType = mealTypes[food.etc];
+                dateEmission[mealType] -= food.totalEmission;
+                dateEmission.totalEmission -= food.totalEmission;
+            }
+            // 배출량이 0이면 해당 날짜를 삭제
+            if (dateEmission.totalEmission === 0) {
+                info.dates = info.dates.filter(de => de.date !== date);
+            }
+            // dates 배열이 비어있으면 Info를 삭제
+            if (info.dates.length === 0) {
+                await Info.deleteOne({ email: email });
+            } else {
+                // DB에 저장
+                await info.save();
+            }
             return res.json({
                 success: true,
                 message: `${foodnames}이(가) 삭제되었습니다!`,
