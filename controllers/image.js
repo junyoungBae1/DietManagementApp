@@ -1,5 +1,6 @@
 const Image = require('../models/image');
 const User = require('../models/user');
+const Info = require('../models/info')
 var moment = require('moment-timezone');
 
 
