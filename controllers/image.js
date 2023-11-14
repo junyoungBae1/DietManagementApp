@@ -77,27 +77,21 @@ module.exports.saveimage = async (req, res) => {
     if (!info) {
         info = new Info({
             email: email,
-            dates: []
-        });
-    }
-    //Info DB에서 해당 날짜 찾기
-    let dateEmission = info.dates.find(de => de.date === today);
-    // 해당 날짜가 없으면 새로 생성
-    if (!dateEmission) {
-        dateEmission = {
-            date: today,
-            Breakfast: 0,
-            Lunch: 0,
-            Dinner: 0,
-            totalEmission: 0,
-            score: {
-                Dessert: 0,
+            dates: [{
+                date: today,
                 Breakfast: 0,
                 Lunch: 0,
-                Dinner: 0
-            }
-        };
-        info.dates.push(dateEmission);
+                Dinner: 0,
+                totalEmission: 0,
+                score: {
+                    Dessert: 0,
+                    Breakfast: 0,
+                    Lunch: 0,
+                    Dinner: 0
+                }
+            }]
+        });
+        await info.save();
     }
     //Info DB에서 해당 이메일 다시 찾기
     info = await Info.findOne({ email: email });
@@ -111,9 +105,7 @@ module.exports.saveimage = async (req, res) => {
         dateEmission.totalEmission += food.totalEmission;
     }
     // 탄소배출량에 기반한 점수 재계산
-    for (let mealType of mealTypes) {
-        dateEmission.score[mealType] = await calScore(dateEmission[mealType], etc);
-    }
+    dateEmission.score[mealTypes[etc]] = await calScore(dateEmission[mealTypes[etc]], etc);
     // DB에 저장
     await info.save();
 
@@ -209,6 +201,7 @@ module.exports.deleteimage = async (req, res, next) => {
         // 시작 시간과 종료 시간 사이에 생성된 모든 이미지를 찾아 삭제
         // const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
         const deletedImage = await Image.findOneAndDelete({ date: date, email: email});
+        let etc = deletedImage.etc;
 
         if (!deletedImage) {
             console.log("해당 날짜에 맞는 파일이 없습니다!");
@@ -226,18 +219,22 @@ module.exports.deleteimage = async (req, res, next) => {
             // 탄소 배출량 빼기
             const mealTypes = ['Dessert', 'Breakfast', 'Lunch', 'Dinner'];
             for (const food of deletedImage.foodnames) {
-                let mealType = mealTypes[food.etc];
+                console.log(food,etc)
+                let mealType = mealTypes[etc];
                 dateEmission[mealType] -= food.totalEmission;
                 dateEmission.totalEmission -= food.totalEmission;
             }
             // 탄소배출량에 기반한 점수 재계산
-            for (let mealType of mealTypes) {
-                dateEmission.score[mealType] = await calScore(dateEmission[mealType], etc);
-            }
+            dateEmission.score[mealTypes[etc]] = await calScore(dateEmission[mealTypes[etc]], etc);
+
             // 배출량이 0이면 해당 날짜를 삭제
             if (dateEmission.totalEmission === 0) {
-                info.dates = info.dates.filter(de => de.date !== date);
+                await Info.updateOne(
+                    { email: email }, 
+                    { $unset: { dates: 1 } }
+                );
             }
+            info = await Info.findOne({ email: email });
             // dates 배열이 비어있으면 Info를 삭제
             if (info.dates.length === 0) {
                 await Info.deleteOne({ email: email });
