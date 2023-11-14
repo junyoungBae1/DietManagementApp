@@ -90,15 +90,29 @@ module.exports.saveimage = async (req, res) => {
             Lunch: 0,
             Dinner: 0,
             totalEmission: 0,
+            score: {
+                Dessert: 0,
+                Breakfast: 0,
+                Lunch: 0,
+                Dinner: 0
+            }
         };
         info.dates.push(dateEmission);
     }
+    //Info DB에서 해당 이메일 다시 찾기
+    info = await Info.findOne({ email: email });
+    //Info DB에서 해당 날짜 다시 찾기
+    dateEmission = info.dates.find(de => de.date === today);
     //Info DB 탄소배출량 추가
     const mealTypes = ['Dessert','Breakfast', 'Lunch', 'Dinner'];
     for (const food of foodnames) {
         let mealType = mealTypes[etc];
         dateEmission[mealType] += food.totalEmission;
         dateEmission.totalEmission += food.totalEmission;
+    }
+    // 탄소배출량에 기반한 점수 재계산
+    for (let mealType of mealTypes) {
+        dateEmission.score[mealType] = await calScore(dateEmission[mealType], etc);
     }
     // DB에 저장
     await info.save();
@@ -146,11 +160,6 @@ module.exports.findimage = async (req,res,next) =>{
      } else {
          console.log("파일 찾기 성공!");
          console.log(date);
-        // Info DB에서 해당 이메일 찾기
-        let info = await Info.findOne({ email: email });
-
-        // 해당 날짜 찾기
-        let dateEmission = info.dates.find(de => de.date === date);
 
         const imagesData = fimages.map(fimage => {
             fimage.foodnames.forEach(food => {
@@ -163,23 +172,17 @@ module.exports.findimage = async (req,res,next) =>{
                 image_etc: fimage.etc
             };
         });
-        
-        let score = Array(4).fill(0);
-         for(let etc in totalEmission) {
-             score[etc] = await calScore(totalEmission[etc], etc);
-         }
-        // 점수를 합산
-        let totalScore = score.reduce((a, b) => a + b, 0);
-
-        // dateEmission에서 해당 날짜 찾기
-        let dateIndex = info.dates.findIndex(de => de.date === date);
-        console.log(info.dates[dateIndex])
-        // 점수가 변경되었을 경우만 DB 수정
-        if (info.dates[dateIndex].score !== totalScore) {
-            info.dates[dateIndex].score = totalScore;
-            console.log(info.dates[dateIndex])
-            await info.save();  // DB에 저장
-        }
+        // Info DB에서 해당 이메일 찾기
+        let info = await Info.findOne({ email: email });
+        // 해당 날짜 찾기
+        let dateEmission = info.dates.find(de => de.date === date);
+        // score가져오기
+        let score = [
+            dateEmission.score.Dessert,
+            dateEmission.score.Breakfast,
+            dateEmission.score.Lunch,
+            dateEmission.score.Dinner
+        ]
 
          return res.json({
              success: true,
@@ -226,6 +229,10 @@ module.exports.deleteimage = async (req, res, next) => {
                 let mealType = mealTypes[food.etc];
                 dateEmission[mealType] -= food.totalEmission;
                 dateEmission.totalEmission -= food.totalEmission;
+            }
+            // 탄소배출량에 기반한 점수 재계산
+            for (let mealType of mealTypes) {
+                dateEmission.score[mealType] = await calScore(dateEmission[mealType], etc);
             }
             // 배출량이 0이면 해당 날짜를 삭제
             if (dateEmission.totalEmission === 0) {

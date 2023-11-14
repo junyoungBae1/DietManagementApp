@@ -25,9 +25,11 @@ const DateEmissionSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    score:{
-        type: Number,
-        default: 0
+    score: {
+        Dessert: { type: Number, default: 0 },
+        Breakfast: { type: Number, default: 0 },
+        Lunch: { type: Number, default: 0 },
+        Dinner: { type: Number, default: 0 }
     }
 }, { _id : false });
 
