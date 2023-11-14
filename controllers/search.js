@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe');
 const Image = require('../models/image')
+const Info = require('../models/info')
 module.exports.foodsearch = async (req, res, next) => {
     
     try {
@@ -23,19 +24,19 @@ module.exports.foodsearch = async (req, res, next) => {
 module.exports.report = async (req, res, next) => {
     try {
         const email = req.body.email;
-        const images = await Image.find({email: email})
-        console.log(email)
-        let foodnames = images.map(image => image.foodnames).reduce((acc, val) => acc.concat(val), []);
+        const info = await Info.find({email: email})
         
-        if (images.length === 0) {
+
+        
+        if (info.length === 0) {
             return res.json({
                 success: false,
-                message: "해당 이메일에 맞는 이미지가 없습니다!",
+                message: "등록한 적이 없습니다.",
             });
         } else {
             return res.json({
-                images_data_count : images.length,
-                images_foodnames : foodnames,
+                images_data_count : info.length,
+                info : info,
             });
         }
     } catch (err) {
