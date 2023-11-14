@@ -142,17 +142,18 @@ module.exports.findimage = async (req,res,next) =>{
 
 module.exports.deleteimage = async (req, res, next) => {
     let date = req.body.date;
-     let targetDate = moment.tz(date,"Asia/Seoul");
+     // let targetDate = moment.tz(date,"Asia/Seoul");
 
     // 그 날의 시작 시간과 종료 시간
-    let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");
-    let endOfDay = targetDate.clone().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+    // let startOfDay = targetDate.clone().startOf('day').format("YYYY-MM-DD HH:mm:ss");
+    // let endOfDay = targetDate.clone().endOf('day').format("YYYY-MM-DD HH:mm:ss");
 
     try {
         // 시작 시간과 종료 시간 사이에 생성된 모든 이미지를 찾아 삭제
-        const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
+        // const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
+        const deletedImage = await Image.findOneAndDelete({ date: date });
 
-        if (deletedImages.deletedCount === 0) {
+        if (!deletedImage) {
             console.log("해당 날짜에 맞는 파일이 없습니다!");
             return res.json({
                 success: false,
@@ -160,9 +161,10 @@ module.exports.deleteimage = async (req, res, next) => {
             });
         } else {
             console.log("파일 삭제 성공!");
+            let foodnames = deletedImage.foodnames.map(item => item.foodname).join(', ');
             return res.json({
                 success: true,
-                message: `총 ${deletedImages.deletedCount}개의 파일이 삭제되었습니다!`,
+                message: `${foodnames}이(가) 삭제되었습니다!`,
             });
         }
     } catch (err) {
