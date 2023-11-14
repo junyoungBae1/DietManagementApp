@@ -124,7 +124,7 @@ module.exports.findimage = async (req,res,next) =>{
             };
         });
 
-        let score = {};
+        let score = Array(4).fill(0);
          for(let etc in totalEmission) {
              score[etc] = await calScore(totalEmission[etc], etc);
          }
