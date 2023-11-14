@@ -168,6 +168,18 @@ module.exports.findimage = async (req,res,next) =>{
          for(let etc in totalEmission) {
              score[etc] = await calScore(totalEmission[etc], etc);
          }
+        // 점수를 합산
+        let totalScore = score.reduce((a, b) => a + b, 0);
+
+        // dateEmission에서 해당 날짜 찾기
+        let dateIndex = info.dates.findIndex(de => de.date === date);
+        console.log(info.dates[dateIndex])
+        // 점수가 변경되었을 경우만 DB 수정
+        if (info.dates[dateIndex].score !== totalScore) {
+            info.dates[dateIndex].score = totalScore;
+            console.log(info.dates[dateIndex])
+            await info.save();  // DB에 저장
+        }
 
          return res.json({
              success: true,

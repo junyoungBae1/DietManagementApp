@@ -24,6 +24,10 @@ const DateEmissionSchema = new mongoose.Schema({
     totalEmission:{
         type: Number,
         default: 0
+    },
+    score:{
+        type: Number,
+        default: 0
     }
 }, { _id : false });
 
