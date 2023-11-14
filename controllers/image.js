@@ -201,6 +201,7 @@ module.exports.deleteimage = async (req, res, next) => {
         // 시작 시간과 종료 시간 사이에 생성된 모든 이미지를 찾아 삭제
         // const deletedImages = await Image.deleteMany({ date: { $gte: startOfDay, $lte: endOfDay } });
         const deletedImage = await Image.findOneAndDelete({ date: date, email: email});
+        console.log(deletedImage);
         let etc = deletedImage.etc;
 
         if (!deletedImage) {
