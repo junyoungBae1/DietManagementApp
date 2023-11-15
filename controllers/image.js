@@ -219,7 +219,9 @@ module.exports.deleteimage = async (req, res, next) => {
             let dateEmission = info.dates.find(de => de.date === today);
             // 탄소 배출량 빼기
             const mealTypes = ['Dessert', 'Breakfast', 'Lunch', 'Dinner'];
+            console.log("date",dateEmission)
             for (const food of deletedImage.foodnames) {
+                
                 console.log(food,etc)
                 let mealType = mealTypes[etc];
                 dateEmission[mealType] -= food.totalEmission;
@@ -227,7 +229,7 @@ module.exports.deleteimage = async (req, res, next) => {
             }
             // 탄소배출량에 기반한 점수 재계산
             dateEmission.score[mealTypes[etc]] = await calScore(dateEmission[mealTypes[etc]], etc);
-
+            await info.save();
             // 배출량이 0이면 해당 날짜를 삭제
             if (dateEmission.totalEmission === 0) {
                 await Info.updateOne(
