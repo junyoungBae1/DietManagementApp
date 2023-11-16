@@ -247,21 +247,6 @@ module.exports.deleteimage = async (req, res, next) => {
             // 탄소배출량에 기반한 점수 재계산
             dateEmission.score[mealTypes[etc]] = await calScore(dateEmission[mealTypes[etc]], etc);
             await info.save();
-            // 배출량이 0이면 해당 날짜를 삭제
-            if (dateEmission.totalEmission === 0) {
-                await Info.updateOne(
-                    { email: email }, 
-                    { $unset: { dates: 1 } }
-                );
-            }
-            info = await Info.findOne({ email: email });
-            // dates 배열이 비어있으면 Info를 삭제
-            if (info.dates.length === 0) {
-                await Info.deleteOne({ email: email });
-            } else {
-                // DB에 저장
-                await info.save();
-            }
             return res.json({
                 success: true,
                 message: `${foodnames}이(가) 삭제되었습니다!`,
