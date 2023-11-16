@@ -35,7 +35,7 @@ module.exports.report = async (req, res, next) => {
             });
         } else {
             return res.json({
-                images_data_count : info.length,
+                info_data_count : info.length,
                 info : info,
             });
         }

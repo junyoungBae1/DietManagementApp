@@ -97,6 +97,23 @@ module.exports.saveimage = async (req, res) => {
     info = await Info.findOne({ email: email });
     //Info DB에서 해당 날짜 다시 찾기
     dateEmission = info.dates.find(de => de.date === today);
+    //Info DB에 해당 날짜 없으면 추가
+    if(!dateEmission){
+        info.dates.push({
+            date: today,
+            Breakfast: 0,
+            Lunch: 0,
+            Dinner: 0,
+            totalEmission: 0,
+            score: {
+                Dessert: 0,
+                Breakfast: 0,
+                Lunch: 0,
+                Dinner: 0
+            }
+        });
+        dateEmission = info.dates.find(de => de.date === today);
+    }
     //Info DB 탄소배출량 추가
     const mealTypes = ['Dessert','Breakfast', 'Lunch', 'Dinner'];
     for (const food of foodnames) {
@@ -147,7 +164,7 @@ module.exports.findimage = async (req,res,next) =>{
         console.log("해당 날짜에 맞는 파일이 없습니다!");
         return res.json({
             success: false,
-            message: "해당 날짜에 맞는 파일이 없습니다!",
+            message: "findimage해당 날짜에 맞는 파일이 없습니다!",
         });
      } else {
          console.log("파일 찾기 성공!");
